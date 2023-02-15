@@ -286,14 +286,16 @@ public class Zip {
      
      - notes: Supports implicit progress composition
      */
-    public class func zipFiles(paths: [URL], zipFilePath: URL, password: String?, compression: ZipCompression = .DefaultCompression, progress: ((_ progress: Double) -> ())?) throws {
+    public class func zipFiles(paths: [URL], zipFileLocationWithName: String, password: String?, compression: ZipCompression = .DefaultCompression, progress: ((_ progress: Double) -> ())?) throws {
         
-        // File manager
         let fileManager = FileManager.default
+        var saveLocation: String = zipFileLocationWithName
         
-        // Check whether a zip file exists at path.
-        let destinationPath = zipFilePath.path
-        
+        // 저장하고자 하는 경로에 같은 이름의 파일이 이미 있다면 넘버링한다
+        if fileManager.fileExists(atPath: saveLocation) {
+            saveLocation = getFileNameForDuplication(filePath: saveLocation)
+        }
+             
         // Process zip paths
         let processedPaths = ZipUtilities().processZipPaths(paths)
         
@@ -322,7 +324,7 @@ public class Zip {
         progressTracker.kind = ProgressKind.file
         
         // Begin Zipping
-        let zip = zipOpen(destinationPath, APPEND_STATUS_CREATE)
+        let zip = zipOpen(saveLocation, APPEND_STATUS_CREATE)
         for path in processedPaths {
             let filePath = path.filePath()
             var isDirectory: ObjCBool = false
@@ -389,6 +391,25 @@ public class Zip {
         }
         
         progressTracker.completedUnitCount = Int64(totalSize)
+    }
+    
+    // 중복압축파일 넘버링
+    class func getFileNameForDuplication(filePath: String, fileNumber: Int = 2) -> String {
+        let fileManager = FileManager.default
+        var fileUrl: URL = URL(fileURLWithPath: filePath)
+        let fileExtension: String = fileUrl.pathExtension
+        
+        fileUrl = fileUrl.deletingPathExtension()
+
+        var newFilePath: String = ""
+        let tempFilePath = fileUrl.path + " \(fileNumber)" + ".\(fileExtension)"
+
+        if fileManager.fileExists(atPath: tempFilePath) {
+            newFilePath = getFileNameForDuplication(filePath: filePath, fileNumber: fileNumber + 1)
+        } else {
+            return tempFilePath
+        }
+        return newFilePath
     }
 
     /**

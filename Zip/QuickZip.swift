@@ -90,9 +90,9 @@ extension Zip {
      
      - returns: NSURL of the destination folder.
      */
-    public class func quickZipFiles(_ paths: [URL], fileName: String) throws -> URL {
-        return try quickZipFiles(paths, fileName: fileName, progress: nil)
-    }
+//    public class func quickZipFiles(_ paths: [URL], fileName: String) throws -> URL {
+//        return try quickZipFiles(paths, fileName: fileName, progress: nil)
+//    }
     
     /**
      Quick zip files.
@@ -107,19 +107,19 @@ extension Zip {
      
      - returns: NSURL of the destination folder.
      */
-    public class func quickZipFiles(_ paths: [URL], fileName: String, progress: ((_ progress: Double) -> ())?) throws -> URL {
-        let fileManager = FileManager.default
-        #if os(Linux)
-        // urls(for:in:) is not yet implemented on Linux
-        // See https://github.com/apple/swift-corelibs-foundation/blob/swift-4.2-branch/Foundation/FileManager.swift#L125
-        let documentsUrl = fileManager.temporaryDirectory
-        #else
-        let documentsUrl = fileManager.urls(for: self.searchPathDirectory(), in: .userDomainMask)[0] as URL
-        #endif
-        let destinationUrl = documentsUrl.appendingPathComponent("\(fileName).zip")
-        try self.zipFiles(paths: paths, zipFilePath: destinationUrl, password: nil, progress: progress)
-        return destinationUrl
-    }
+//    public class func quickZipFiles(_ paths: [URL], fileName: String, progress: ((_ progress: Double) -> ())?) throws -> URL {
+//        let fileManager = FileManager.default
+//        #if os(Linux)
+//        // urls(for:in:) is not yet implemented on Linux
+//        // See https://github.com/apple/swift-corelibs-foundation/blob/swift-4.2-branch/Foundation/FileManager.swift#L125
+//        let documentsUrl = fileManager.temporaryDirectory
+//        #else
+//        let documentsUrl = fileManager.urls(for: self.searchPathDirectory(), in: .userDomainMask)[0] as URL
+//        #endif
+//        let destinationUrl = documentsUrl.appendingPathComponent("\(fileName).zip")
+//        try self.zipFiles(paths: paths, zipFilePath: destinationUrl, password: nil, progress: progress)
+//        return destinationUrl
+//    }
     
     
 }
